@@ -1,5 +1,6 @@
 package com.example.feednews.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.feednews.model.Article
 
@@ -7,10 +8,10 @@ import com.example.feednews.model.Article
 interface ArticleDao {
 
     @Query("SELECT * FROM articles")
-    fun getAllArticles(): List<Article>
+    fun getAllArticles(): LiveData<List<Article>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(article: Article)
+    suspend fun insertArticle(article: Article)
 
     @Delete
     suspend fun deleteArticle(article: Article)
