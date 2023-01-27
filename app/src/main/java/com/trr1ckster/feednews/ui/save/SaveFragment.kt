@@ -14,7 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.trr1ckster.feednews.R
 import com.trr1ckster.feednews.adapters.NewsAdapter
 import com.trr1ckster.feednews.databinding.FragmentSaveBinding
-import com.trr1ckster.feednews.factory
+import com.trr1ckster.feednews.ui.factory
 import com.trr1ckster.feednews.ui.MainViewModel
 
 class SaveFragment : Fragment() {

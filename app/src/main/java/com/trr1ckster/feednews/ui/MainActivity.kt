@@ -5,9 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.trr1ckster.feednews.ArticleRepository
 import com.trr1ckster.feednews.R
-import com.trr1ckster.feednews.data.db.ArticleDatabase
 import com.trr1ckster.feednews.databinding.ActivityMainBinding
 
 private lateinit var binding: ActivityMainBinding
@@ -20,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val newsRepository = ArticleRepository(ArticleDatabase (this))
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController

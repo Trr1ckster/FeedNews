@@ -1,48 +1,59 @@
 package com.trr1ckster.feednews.ui
 
-import androidx.lifecycle.*
-import com.trr1ckster.feednews.ArticleRepository
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.trr1ckster.feednews.data.model.Article
 import com.trr1ckster.feednews.data.model.NewsResponse
-import com.trr1ckster.feednews.utils.Status
+import com.trr1ckster.feednews.data.repository.ArticleRepository
+import com.trr1ckster.feednews.utils.Resource
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class MainViewModel(private val articleRepository: ArticleRepository) : ViewModel() {
 
-    private val _newsLiveData: MutableLiveData<NewsResponse> = MutableLiveData()
-    val newsLiveData: LiveData<NewsResponse> = _newsLiveData
+    private val _newsLiveData: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
+    val newsLiveData: LiveData<Resource<NewsResponse>> = _newsLiveData
 
-    private val _everythingNewsLiveData: MutableLiveData<NewsResponse> = MutableLiveData()
-    val everythingNewsLiveData: LiveData<NewsResponse> = _everythingNewsLiveData
-
-    val status = MutableLiveData<Status>()
+    private val _everythingNewsLiveData: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
+    val everythingNewsLiveData: LiveData<Resource<NewsResponse>> = _everythingNewsLiveData
 
     init {
         getHeadlinesNews()
     }
 
     private fun getHeadlinesNews() = viewModelScope.launch {
-        status.postValue(Status.LOADING)
-        try {
-            val response = articleRepository.getHeadlines()
-            _newsLiveData.postValue(response.body())
-            status.postValue(Status.SUCCESS)
-        } catch (e: Exception) {
-            status.postValue(Status.ERROR)
+        _newsLiveData.postValue(Resource.Loading())
+        val response = articleRepository.getHeadlines()
+        _newsLiveData.postValue(handleGetHeadlinesNews(response))
+    }
+
+    private fun handleGetHeadlinesNews(response: Response<NewsResponse>): Resource<NewsResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let {
+                return Resource.Success(it)
+            }
         }
+        return Resource.Error(response.message())
     }
 
     fun getEverythingNews(searchQuery: String) = viewModelScope.launch {
-        status.postValue(Status.LOADING)
-        try {
-            val response = articleRepository.getEverything(searchQuery)
-            _everythingNewsLiveData.postValue(response.body())
-            status.postValue(Status.SUCCESS)
-        } catch (e: Exception) {
-            status.postValue(Status.ERROR)
-        }
+        _everythingNewsLiveData.postValue(Resource.Loading())
+        val response = articleRepository.getEverything(searchQuery)
+        _everythingNewsLiveData.postValue(handleGetEverythingNews(response))
+
     }
 
+    private fun handleGetEverythingNews(response: Response<NewsResponse>): Resource<NewsResponse> {
+        if (response.isSuccessful) {
+            response.body()?.let {
+                return Resource.Success(it)
+            }
+        }
+        return Resource.Error(response.message())
+
+    }
 
     fun saveArticle(article: Article) = viewModelScope.launch {
         articleRepository.insertArticle(article)

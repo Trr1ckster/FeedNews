@@ -1,4 +1,4 @@
-package com.trr1ckster.feednews.ui
+package com.trr1ckster.feednews.ui.details
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +13,8 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.trr1ckster.feednews.R
 import com.trr1ckster.feednews.databinding.FragmentDetailsBinding
-import com.trr1ckster.feednews.factory
+import com.trr1ckster.feednews.ui.MainViewModel
+import com.trr1ckster.feednews.ui.factory
 
 
 class DetailsFragment : Fragment() {

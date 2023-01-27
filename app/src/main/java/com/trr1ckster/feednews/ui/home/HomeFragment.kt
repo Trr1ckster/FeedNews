@@ -1,6 +1,7 @@
 package com.trr1ckster.feednews.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.trr1ckster.feednews.R
 import com.trr1ckster.feednews.adapters.NewsAdapter
 import com.trr1ckster.feednews.databinding.FragmentHomeBinding
-import com.trr1ckster.feednews.factory
+import com.trr1ckster.feednews.ui.factory
 import com.trr1ckster.feednews.ui.MainViewModel
-import com.trr1ckster.feednews.utils.Status
+import com.trr1ckster.feednews.utils.Resource
+
 
 class HomeFragment : Fragment() {
 
@@ -43,26 +45,31 @@ class HomeFragment : Fragment() {
             )
         }
 
-        viewModel.newsLiveData.observe(viewLifecycleOwner) {
-            recyclerAdapter.differ.submitList(it.articles)
-        }
+//        viewModel.newsLiveData.observe(viewLifecycleOwner) {
+//            recyclerAdapter.differ.submitList(it.articles)
+//        }
 
-        viewModel.status.observe(viewLifecycleOwner) {
-            when (it) {
-                Status.LOADING -> {
+        viewModel.newsLiveData.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is Resource.Success -> {
+                    binding.progressBar.visibility = View.INVISIBLE
+                    response.data?.let {
+                        recyclerAdapter.differ.submitList(it.articles)
+                    }
+                }
+                is Resource.Error -> {
+                    binding.progressBar.visibility = View.INVISIBLE
+                    response.message?.let { message ->
+                        Log.e("TAG", "An error occurred: $message")
+                    }
+                }
+                is Resource.Loading -> {
+//                    binding.noConnection.visibility = View.VISIBLE
                     binding.progressBar.visibility = View.VISIBLE
-                }
-                Status.SUCCESS -> {
-                    binding.progressBar.visibility = View.GONE
-                }
-                Status.ERROR -> {
-                    binding.noConnection.visibility = View.VISIBLE
-                    binding.progressBar.visibility = View.GONE
                 }
             }
 
         }
-
         return binding.root
     }
 }

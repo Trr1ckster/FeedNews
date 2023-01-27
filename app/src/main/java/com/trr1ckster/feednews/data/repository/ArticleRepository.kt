@@ -1,4 +1,4 @@
-package com.trr1ckster.feednews
+package com.trr1ckster.feednews.data.repository
 
 import com.trr1ckster.feednews.data.db.ArticleDatabase
 import com.trr1ckster.feednews.data.model.Article

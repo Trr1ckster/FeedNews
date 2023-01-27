@@ -1,6 +1,7 @@
 package com.trr1ckster.feednews.ui.search
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.trr1ckster.feednews.R
 import com.trr1ckster.feednews.adapters.NewsAdapter
 import com.trr1ckster.feednews.databinding.FragmentSearchBinding
-import com.trr1ckster.feednews.factory
+import com.trr1ckster.feednews.ui.factory
 import com.trr1ckster.feednews.ui.MainViewModel
+import com.trr1ckster.feednews.utils.Resource
 
 class SearchFragment : Fragment() {
 
@@ -32,8 +34,23 @@ class SearchFragment : Fragment() {
         recyclerAdapter = NewsAdapter()
         binding.recyclerViewSearch.adapter = recyclerAdapter
 
-        viewModel.everythingNewsLiveData.observe(viewLifecycleOwner) {
-            recyclerAdapter.differ.submitList(it?.articles)
+        viewModel.everythingNewsLiveData.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is Resource.Success -> {
+                    response.data?.let {
+                        recyclerAdapter.differ.submitList(it.articles)
+                    }
+                }
+                is Resource.Error -> {
+                    response.message?.let { message ->
+                        Log.e("TAG", "An error occurred: $message")
+                    }
+                }
+                is Resource.Loading -> {
+
+                }
+            }
+
         }
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
