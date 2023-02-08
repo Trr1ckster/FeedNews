@@ -16,10 +16,10 @@ import com.trr1ckster.feednews.ui.factory
 import com.trr1ckster.feednews.ui.MainViewModel
 import com.trr1ckster.feednews.utils.Resource
 
-
 class HomeFragment : Fragment() {
 
-    private lateinit var binding: FragmentHomeBinding
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
     private lateinit var recyclerAdapter: NewsAdapter
     private val viewModel: MainViewModel by viewModels { factory() }
 
@@ -28,7 +28,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerAdapter = NewsAdapter()
@@ -45,31 +45,31 @@ class HomeFragment : Fragment() {
             )
         }
 
-//        viewModel.newsLiveData.observe(viewLifecycleOwner) {
-//            recyclerAdapter.differ.submitList(it.articles)
-//        }
-
         viewModel.newsLiveData.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Resource.Success -> {
-                    binding.progressBar.visibility = View.INVISIBLE
+                    binding.homeProgressBar.visibility = View.INVISIBLE
                     response.data?.let {
                         recyclerAdapter.differ.submitList(it.articles)
                     }
                 }
                 is Resource.Error -> {
-                    binding.progressBar.visibility = View.INVISIBLE
+                    binding.homeProgressBar.visibility = View.INVISIBLE
                     response.message?.let { message ->
                         Log.e("TAG", "An error occurred: $message")
                     }
                 }
                 is Resource.Loading -> {
-//                    binding.noConnection.visibility = View.VISIBLE
-                    binding.progressBar.visibility = View.VISIBLE
+                    binding.homeProgressBar.visibility = View.VISIBLE
                 }
             }
 
         }
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }

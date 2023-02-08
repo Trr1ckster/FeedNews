@@ -19,7 +19,8 @@ import com.trr1ckster.feednews.utils.Resource
 
 class SearchFragment : Fragment() {
 
-    private lateinit var binding: FragmentSearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
     private lateinit var recyclerAdapter: NewsAdapter
     private val viewModel: MainViewModel by viewModels { factory() }
 
@@ -28,7 +29,7 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         binding.recyclerViewSearch.layoutManager = LinearLayoutManager(requireContext())
         recyclerAdapter = NewsAdapter()
@@ -76,6 +77,11 @@ class SearchFragment : Fragment() {
             )
         }
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
 }

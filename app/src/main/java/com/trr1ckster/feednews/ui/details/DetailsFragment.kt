@@ -19,7 +19,8 @@ import com.trr1ckster.feednews.ui.factory
 
 class DetailsFragment : Fragment() {
 
-    private lateinit var binding: FragmentDetailsBinding
+    private var _binding: FragmentDetailsBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: MainViewModel by viewModels { factory() }
     private val args: DetailsFragmentArgs by navArgs()
 
@@ -28,7 +29,7 @@ class DetailsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         val article = args.article
         binding.webView.apply {
             webViewClient = WebViewClient()
@@ -69,5 +70,9 @@ class DetailsFragment : Fragment() {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
 
 }

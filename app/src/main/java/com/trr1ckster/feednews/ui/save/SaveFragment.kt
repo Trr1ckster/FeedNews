@@ -18,8 +18,9 @@ import com.trr1ckster.feednews.ui.factory
 import com.trr1ckster.feednews.ui.MainViewModel
 
 class SaveFragment : Fragment() {
-    private val viewModel: MainViewModel by viewModels {factory()}
-    private lateinit var binding: FragmentSaveBinding
+    private var _binding: FragmentSaveBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: MainViewModel by viewModels { factory() }
     private lateinit var recyclerAdapter: NewsAdapter
 
     override fun onCreateView(
@@ -27,7 +28,7 @@ class SaveFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSaveBinding.inflate(inflater, container, false)
+        _binding = FragmentSaveBinding.inflate(inflater, container, false)
 
         binding.recyclerViewSave.layoutManager = LinearLayoutManager(requireContext())
         recyclerAdapter = NewsAdapter()
@@ -79,5 +80,10 @@ class SaveFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }
